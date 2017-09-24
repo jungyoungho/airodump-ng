@@ -214,8 +214,8 @@ struct ieee80211_Deauthentication
 struct ieee80211_Association
 {
     struct ieee80211_common c;
-    uint8_t Receiver_addr[6];
-    uint8_t Trasmitter_addr[6];
+    uint8_t Dst_addr[6];
+    uint8_t Src_addr[6];
     uint8_t BSSID[6];
 
     uint16_t Fragment_num:4;
@@ -225,8 +225,8 @@ struct ieee80211_Association
 struct ieee80211_Ressociation
 {
     struct ieee80211_common c;
-    uint8_t Receiver_addr[6];
-    uint8_t Trasmitter_addr[6];
+    uint8_t Dst_addr[6];
+    uint8_t Src_addr[6];
     uint8_t BSSID[6];
 
     uint16_t Fragment_num:4;

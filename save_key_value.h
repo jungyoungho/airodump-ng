@@ -58,19 +58,21 @@ struct key_Reassociation_req
 struct value_Reassociation_req
 {
     uint8_t  src_addr[6];
-    uint8_t  Rea_req_ESSID[32];
-};
-
-
-//################## Reassociation Response ##################
-struct key_Reassociation_res
-{
-    uint8_t Reassociation_res_save_BSSID[6];
-};
-struct value_Reassociation_res
-{
     uint8_t  dst_addr[6];
     uint8_t  Rea_req_ESSID[32];
+};
+
+
+//################## association Request ##################
+struct key_Association_res
+{
+    uint8_t Association_res_save_BSSID[6];
+};
+struct value_Association_res
+{
+    uint8_t  dst_addr[6];
+    uint8_t  src_addr[6];
+    uint8_t  A_req_ESSID[32];
 };
 
 #endif // SAVE_KEY_VALUE_H

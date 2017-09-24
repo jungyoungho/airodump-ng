@@ -11,13 +11,6 @@ using namespace std;
 void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
 {
 
-    map<struct key_beacon, struct value_beacon>beacon;
-    map<struct key_probe_req, struct value_probe_req>probe_req;
-    map<struct key_probe_res, struct value_probe_res>probe_res;
-    map<struct key_Reassociation_req, struct value_Reassociation_req>Reassociation_req;
-    map<struct key_Reassociation_res, struct value_Reassociation_res>Reassociation_res;
-    map<struct key_QosData, struct value_QosData>Qos;
-
     int packet_len = pkthdr->caplen;
     struct radiotap_header *rh = (struct radiotap_header*)packet;
     packet += rh->header_len;
@@ -28,7 +21,56 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
         switch(c->Sutype)
         {
             case 0:
+            {
+                struct key_Association_res Ar;
+                struct value_Association_res vA;
                 cout << "Association request" <<endl;
+                struct ieee80211_Association *A = (struct ieee80211_Association*)packet;
+                memcpy(Ar.Association_res_save_BSSID,A->BSSID,6);
+                memcpy(vA.dst_addr,A->Dst_addr,6);
+                memcpy(vA.src_addr,A->Src_addr,6);
+                packet += sizeof(struct ieee80211_Association) + sizeof(struct ieee80211_wireless_LAN_mg_Association);
+                while(packet_len!=0)
+                {
+                    struct Tagpara_common *Tc = (struct Tagpara_common*)packet;
+                    if(Tc->TagLen==0) break;
+
+                    switch(Tc->TagNum)
+                    {
+                        case 0:
+                        {
+                             packet += sizeof(struct Tagpara_common);
+
+                             uint8_t BOX[Tc->TagLen]{0};
+                             memcpy(BOX, packet, Tc->TagLen);
+                             for(int i=0; i<Tc->TagLen;i++)
+                                printf("%c",BOX[i]);
+                             printf("\n");
+
+                             /*
+                             memcpy(&vA.ESSID[0], packet,Tc->TagLen); //안되는 이유를 모르겠음..
+                             for(int i=0; i<Tc->TagLen;i++)
+                                printf("%c",vA.ESSID[i]);
+                             printf("\n");
+                             */
+
+                             if(Tc->TagLen!=0)
+                                packet += Tc->TagLen;
+                        }
+                        break;
+
+                        default:
+                        {
+                             packet += sizeof(struct Tagpara_common);
+                             if(Tc->TagLen!=0)
+                                packet += Tc->TagLen;
+                        }
+                        break;
+                    }
+
+                }
+
+            }
             break;
 
             case 1:
@@ -36,7 +78,56 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
             break;
 
             case 2:
+            {
+                struct key_Reassociation_req Rr;
+                struct value_Reassociation_req vR;
                 cout << "Reassociation request" <<endl;
+                struct ieee80211_Ressociation *R = (struct ieee80211_Ressociation*)packet;
+                memcpy(Rr.Reassociation_req_save_BSSID,R->BSSID,6);
+                memcpy(vR.src_addr,R->Src_addr,6);
+                memcpy(vR.dst_addr,R->Dst_addr,6);
+                packet += sizeof(struct ieee80211_Ressociation) + sizeof(struct ieee80211_wireless_LAN_mg_Reassociation);
+                while(packet_len!=0)
+                {
+                    struct Tagpara_common *Tc = (struct Tagpara_common*)packet;
+                    if(Tc->TagLen==0) break;
+
+                    switch(Tc->TagNum)
+                    {
+                        case 0:
+                        {
+                             packet += sizeof(struct Tagpara_common);
+
+                             uint8_t BOX[Tc->TagLen]{0};
+                             memcpy(BOX, packet, Tc->TagLen);
+                             for(int i=0; i<Tc->TagLen;i++)
+                                printf("%c",BOX[i]);
+                             printf("\n");
+
+                             /*
+                             memcpy(&vR.ESSID[0], packet,Tc->TagLen); //안되는 이유를 모르겠음..
+                             for(int i=0; i<Tc->TagLen;i++)
+                                printf("%c",vR.ESSID[i]);
+                             printf("\n");
+                             */
+
+                             if(Tc->TagLen!=0)
+                                packet += Tc->TagLen;
+                        }
+                        break;
+
+                        default:
+                        {
+                             packet += sizeof(struct Tagpara_common);
+                             if(Tc->TagLen!=0)
+                                packet += Tc->TagLen;
+                        }
+                        break;
+                    }
+
+                }
+
+            }
             break;
 
             case 3:
@@ -52,7 +143,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                 memcpy(kp.probe_save_bssid,PR->BSSID,6);
                 memcpy(vp.src,PR->Src_addr,6);
                 packet += sizeof(struct ieee80211_Probe_Request);
-                while(packet_len!=0)   // 함수화하기
+                while(packet_len!=0)
                 {
                     struct Tagpara_common *Tc = (struct Tagpara_common*)packet;
                     if(Tc->TagLen==0) break;
@@ -113,7 +204,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                 memcpy(kps.probe_save_bssid,PRS->BSSID,6);
                 memcpy(vps.src,PRS->Src_addr,6);
                 packet += sizeof(struct ieee80211_Probe_Response) + sizeof(struct ieee80211_wireless_LAN_mg_Beacon);
-                while(packet_len!=0)   // 함수화하기
+                while(packet_len!=0)
                 {
                     struct Tagpara_common *Tc = (struct Tagpara_common*)packet;
                     if(Tc->TagLen==0) break;
@@ -131,9 +222,9 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                              printf("\n");
 
                              /*
-                             memcpy(&vp.ESSID[0], packet,Tc->TagLen); //안되는 이유를 모르겠음..
+                             memcpy(&vps.ESSID[0], packet,Tc->TagLen); //안되는 이유를 모르겠음..
                              for(int i=0; i<Tc->TagLen;i++)
-                                printf("%c",vp.ESSID[i]);
+                                printf("%c",vps.ESSID[i]);
                              printf("\n");
                              */
                              if(Tc->TagLen!=0)
@@ -172,6 +263,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
 
                 struct ieee80211_Beacon_frame *BF = (struct ieee80211_Beacon_frame*)packet;
                 memcpy(k.save_bssid,BF->BSSID,6);
+
                 packet += sizeof(struct ieee80211_Beacon_frame) + sizeof(struct ieee80211_wireless_LAN_mg_Beacon);
 
                 while(packet_len!=0)
