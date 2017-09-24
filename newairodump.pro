@@ -7,4 +7,5 @@ SOURCES += main.cpp \
     makedata.cpp
 
 HEADERS += \
-    radio.h
+    radio.h \
+    save_key_value.h

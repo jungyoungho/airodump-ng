@@ -2,47 +2,22 @@
 #include <pcap.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <map>
 #include "radio.h"
-
+#include "save_key_value.h"
 using namespace std;
 
-struct key_beacon
-{
-    uint8_t save_bssid[6];
-};
-
-struct value_beacon
-{
-    uint8_t current_channel;
-    uint8_t ESSID[32]; //Maximum 32 length //이부분이 문제임
-};
-
-struct key_probe_req
-{
-    uint8_t probe_save_bssid[6];
-};
-
-struct value_probe_req
-{
-    uint8_t src[6];
-    uint8_t probe_current_channel;
-    uint8_t probe_ESSID[]; //Maximum 32 length //이부분이 문제임
-};
-
-struct key_probe_res
-{
-    uint8_t probe_save_bssid[6];
-};
-
-struct value_probe_res
-{
-    uint8_t src[6];
-    uint8_t probe_current_channel;
-    uint8_t probe_ESSID[]; //Maximum 32 length //이부분이 문제임
-};
 
 void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
 {
+
+    map<struct key_beacon, struct value_beacon>beacon;
+    map<struct key_probe_req, struct value_probe_req>probe_req;
+    map<struct key_probe_res, struct value_probe_res>probe_res;
+    map<struct key_Reassociation_req, struct value_Reassociation_req>Reassociation_req;
+    map<struct key_Reassociation_res, struct value_Reassociation_res>Reassociation_res;
+    map<struct key_QosData, struct value_QosData>Qos;
+
     int packet_len = pkthdr->caplen;
     struct radiotap_header *rh = (struct radiotap_header*)packet;
     packet += rh->header_len;
@@ -100,6 +75,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                                 printf("%c",vp.ESSID[i]);
                              printf("\n");
                              */
+
                              if(Tc->TagLen!=0)
                                 packet += Tc->TagLen;
                         }
@@ -294,8 +270,16 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
     {
         switch(c->Sutype)
         {
-            case 8: //START hERE
+            case 8:
+            {
+                struct key_QosData KQ;
+                struct value_QosData vQ;
                 cout<<"Qos Data"<<endl;
+                struct ieee80211_Qos_Data *QD = (struct ieee80211_Qos_Data*)packet;
+                memcpy(KQ.Qos_save_BSSID,QD->BSSID,6);
+                memcpy(vQ.Dst,QD->Dst_addr,6);
+                memcpy(vQ.STA_addr,QD->STA,6);
+            }
             break;
 
             case 0:
