@@ -102,7 +102,7 @@ struct ieee80211_Probe_Request //beacon frame 와 Probe response랑 구조가 �
 {
     struct ieee80211_common c;
     uint8_t Receiver_addr[6];
-    uint8_t Trasmitter_addr[6];
+    uint8_t Src_addr[6];
     uint8_t BSSID[6];
 
     uint16_t Fragment_num:4;
@@ -113,7 +113,7 @@ struct ieee80211_Probe_Response
 {
     struct ieee80211_common c;
     uint8_t Receiver_addr[6];
-    uint8_t Trasmitter_addr[6];
+    uint8_t Src_addr[6];
     uint8_t BSSID[6];
 
     uint16_t Fragment_num:4;
@@ -133,8 +133,8 @@ struct ieee80211_Beacon_frame
 struct ieee80211_Qos_Data
 {
     struct ieee80211_common c;
-    uint8_t Receiver_addr[6];
-    uint8_t Trasmitter_addr[6];
+    uint8_t BSSID[6];
+    uint8_t STA[6];
     uint8_t Dst_addr[6];
 
     uint16_t Fragment_num:4;
