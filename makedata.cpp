@@ -44,7 +44,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                         case 0:
                         {
                              packet += sizeof(struct Tagpara_common);
-                             memcpy(&vA.A_req_ESSID, packet,Tc->TagLen);
+                             memcpy(vA.A_req_ESSID, packet,Tc->TagLen);
                              cout << vA.A_req_ESSID << endl;
                              if(packet_len < Tc->TagLen)
                                  break;
@@ -103,7 +103,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                         case 0:
                         {
                              packet += sizeof(struct Tagpara_common);
-                             memcpy(&vR.Rea_req_ESSID, packet,Tc->TagLen);
+                             memcpy(vR.Rea_req_ESSID, packet,Tc->TagLen);
                              cout << vR.Rea_req_ESSID << endl;
                              if(packet_len < Tc->TagLen)
                                  break;
@@ -153,7 +153,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
 
                 while(1)
                 {
-                    if(a==1&&b==1)//case 0과 case 3이 모두 선택됬을경우 프로그램 종료
+                    if(a==1 && b==1)//case 0과 case 3이 모두 선택됬을경우 프로그램 종료
                         break;
                     struct Tagpara_common *Tc = (struct Tagpara_common*)packet;
                     memset(vpr.probe_ESSID,0,32);
@@ -162,7 +162,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                         case 0:
                         {
                              packet += sizeof(struct Tagpara_common);
-                             memcpy(&vpr.probe_ESSID, packet,Tc->TagLen);
+                             memcpy(vpr.probe_ESSID, packet,Tc->TagLen);
                              cout << "#############"<<vpr.probe_ESSID << endl;
 
                                 packet += Tc->TagLen;
@@ -222,7 +222,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                         case 0:
                         {
                              packet += sizeof(struct Tagpara_common);
-                             memcpy(&vps.probe_ESSID, packet,Tc->TagLen);
+                             memcpy(vps.probe_ESSID, packet,Tc->TagLen);
                              cout << vps.probe_ESSID << endl;
                              if(packet_len < Tc->TagLen)
                                  break;
@@ -277,7 +277,6 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
 
                 struct ieee80211_Beacon_frame *BF = (struct ieee80211_Beacon_frame*)packet;
                 memcpy(k.save_bssid,BF->BSSID,6);
-
                 packet += sizeof(struct ieee80211_Beacon_frame) + sizeof(struct ieee80211_wireless_LAN_mg_Beacon);
 
                 int a{0},b{0}; //check point
