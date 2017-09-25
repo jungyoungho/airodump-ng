@@ -1,6 +1,7 @@
 #ifndef RADIO_H
 #define RADIO_H
 #include <stdint.h>
+
 struct radiotap_header
 {
     uint8_t header_version;

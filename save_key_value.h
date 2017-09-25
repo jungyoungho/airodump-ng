@@ -1,6 +1,7 @@
 #ifndef SAVE_KEY_VALUE_H
 #define SAVE_KEY_VALUE_H
 //################### Beacon ###################
+
 struct key_beacon
 {
     uint8_t save_bssid[6];
@@ -8,7 +9,7 @@ struct key_beacon
 struct value_beacon
 {
     uint8_t current_channel;
-    uint8_t ESSID[32]; //Maximum 32 length //이부분이 문제임
+    uint8_t ESSID[32];
 };
 
 
@@ -21,7 +22,7 @@ struct value_probe_req
 {
     uint8_t src[6];
     uint8_t probe_current_channel;
-    uint8_t probe_ESSID[32]; //Maximum 32 length //이부분이 문제임
+    uint8_t probe_ESSID[32];
 };
 
 
@@ -34,7 +35,7 @@ struct value_probe_res
 {
     uint8_t src[6];
     uint8_t probe_current_channel;
-    uint8_t probe_ESSID[32]; //Maximum 32 length //이부분이 문제임
+    uint8_t probe_ESSID[32];
 };
 
 
