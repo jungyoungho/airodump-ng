@@ -20,6 +20,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
     {
         switch(c->Sutype)
         {
+        /*
             case 0:
             {
                 struct key_Association_res Ar;
@@ -41,18 +42,10 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                         {
                              packet += sizeof(struct Tagpara_common);
 
-                             uint8_t BOX[Tc->TagLen]{0};
-                             memcpy(BOX, packet, Tc->TagLen);
-                             for(int i=0; i<Tc->TagLen;i++)
-                                printf("%c",BOX[i]);
-                             printf("\n");
 
-                             /*
-                             memcpy(&vA.ESSID[0], packet,Tc->TagLen); //안되는 이유를 모르겠음..
-                             for(int i=0; i<Tc->TagLen;i++)
-                                printf("%c",vA.ESSID[i]);
-                             printf("\n");
-                             */
+                             memcpy(&vA.A_req_ESSID, packet,Tc->TagLen); //안되는 이유를 모르겠음..
+                             cout << vA.A_req_ESSID << endl;
+
 
                              if(Tc->TagLen!=0)
                                 packet += Tc->TagLen;
@@ -98,18 +91,10 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                         {
                              packet += sizeof(struct Tagpara_common);
 
-                             uint8_t BOX[Tc->TagLen]{0};
-                             memcpy(BOX, packet, Tc->TagLen);
-                             for(int i=0; i<Tc->TagLen;i++)
-                                printf("%c",BOX[i]);
-                             printf("\n");
 
-                             /*
-                             memcpy(&vR.ESSID[0], packet,Tc->TagLen); //안되는 이유를 모르겠음..
-                             for(int i=0; i<Tc->TagLen;i++)
-                                printf("%c",vR.ESSID[i]);
-                             printf("\n");
-                             */
+                             memcpy(&vR.Rea_req_ESSID, packet,Tc->TagLen); //안되는 이유를 모르겠음..
+                             cout << vR.Rea_req_ESSID << endl;
+
 
                              if(Tc->TagLen!=0)
                                 packet += Tc->TagLen;
@@ -154,18 +139,10 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                         {
                              packet += sizeof(struct Tagpara_common);
 
-                             uint8_t BOX[Tc->TagLen]{0};
-                             memcpy(BOX, packet, Tc->TagLen);
-                             for(int i=0; i<Tc->TagLen;i++)
-                                printf("%c",BOX[i]);
-                             printf("\n");
 
-                             /*
-                             memcpy(&vp.ESSID[0], packet,Tc->TagLen); //안되는 이유를 모르겠음..
-                             for(int i=0; i<Tc->TagLen;i++)
-                                printf("%c",vp.ESSID[i]);
-                             printf("\n");
-                             */
+                             memcpy(&vp.probe_ESSID, packet,Tc->TagLen); //안되는 이유를 모르겠음..
+                             cout << vp.probe_ESSID << endl;
+
 
                              if(Tc->TagLen!=0)
                                 packet += Tc->TagLen;
@@ -215,18 +192,11 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                         {
                              packet += sizeof(struct Tagpara_common);
 
-                             uint8_t BOX[Tc->TagLen]{0};
-                             memcpy(BOX, packet, Tc->TagLen);
-                             for(int i=0; i<Tc->TagLen;i++)
-                                printf("%c",BOX[i]);
-                             printf("\n");
 
-                             /*
-                             memcpy(&vps.ESSID[0], packet,Tc->TagLen); //안되는 이유를 모르겠음..
-                             for(int i=0; i<Tc->TagLen;i++)
-                                printf("%c",vps.ESSID[i]);
-                             printf("\n");
-                             */
+                             memcpy(&vps.probe_ESSID, packet,Tc->TagLen); //안되는 이유를 모르겠음..
+                             cout << vps.probe_ESSID << endl;
+
+
                              if(Tc->TagLen!=0)
                                 packet += Tc->TagLen;
                         }
@@ -254,7 +224,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                  }
             }
             break;
-
+*/
             case 8:
             {
                 struct key_beacon k;
@@ -266,53 +236,64 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
 
                 packet += sizeof(struct ieee80211_Beacon_frame) + sizeof(struct ieee80211_wireless_LAN_mg_Beacon);
 
-                while(packet_len!=0)
-                {
-                    struct Tagpara_common *Tc = (struct Tagpara_common*)packet;
-                    if(Tc->TagLen==0) break;
+                int a{0},b{0}; //check point
 
+                while(1)
+                {
+                    if(a==1 && b==1)//case 0과 case 3이 모두 선택됬을경우 프로그램 종료
+                        break;
+
+                    struct Tagpara_common *Tc = (struct Tagpara_common*)packet;
+                    memset(v.ESSID,0,32);
+                    printf("%d\n",packet_len);
                     switch(Tc->TagNum)
                     {
+
                         case 0:
                         {
+
                              packet += sizeof(struct Tagpara_common);
 
-                             uint8_t BOX[Tc->TagLen]{0};
-                             memcpy(BOX, packet, Tc->TagLen);
-                             for(int i=0; i<Tc->TagLen;i++)
-                                printf("%c",BOX[i]);
-                             printf("\n");
-
-
-                             /*
-                             memcpy(&v.ESSID[0], packet,Tc->TagLen); //안되는 이유를 모르겠음..
-                             for(int i=0; i<Tc->TagLen;i++)
-                                printf("%c",v.ESSID[i]);
-                             printf("\n");
-                             */
-
-                             if(Tc->TagLen!=0)
+                             memcpy(v.ESSID, packet,Tc->TagLen);
+                             cout << v.ESSID << endl;
+                             if(packet_len < Tc->TagLen)
+                                 break;
+                             else if(Tc->TagLen!=0)
+                             {
                                 packet += Tc->TagLen;
-
+                                packet_len -=Tc->TagLen;
+                             }
+                             a=1;//check point
                         }
                         break;
 
                         case 3:
                         {
                              struct Tagpara_DS_para_set *DS = (struct Tagpara_DS_para_set*)packet;
-                             v.current_channel = DS->Current_Channel;
-                             printf("## Current channel = %d\n", v.current_channel);
+                             memcpy(&v.current_channel, &DS->Current_Channel, 1);
+                             cout << "## Current channel = "<< (int)v.current_channel <<endl;
                              packet += sizeof(struct Tagpara_common);
-                             if(Tc->TagLen!=0)
-                                packet+=Tc->TagLen;
+                             if(packet_len < Tc->TagLen)
+                                 break;
+                             else if(Tc->TagLen!=0)
+                             {
+                                packet += Tc->TagLen;
+                                packet_len -=Tc->TagLen;
+                             }
+                             b=1; //check point
                         }
                         break;
 
                         default:
                         {
                              packet += sizeof(struct Tagpara_common);
-                             if(Tc->TagLen!=0)
+                             if(packet_len < Tc->TagLen)
+                                 break;
+                             else if(Tc->TagLen!=0)
+                             {
                                 packet += Tc->TagLen;
+                                packet_len -=Tc->TagLen;
+                             }
                         }
                         break;
                      }
