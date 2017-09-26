@@ -175,6 +175,8 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                     {
                         case 0:
                         {
+                            if(a==1)
+                                break;
                              packet += sizeof(struct Tagpara_common);
                              memcpy(vpr.probe_ESSID, packet,Tc->TagLen);
                              cout << "Probe ESSID = "<< vpr.probe_ESSID << endl;
@@ -182,12 +184,15 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                                 packet += Tc->TagLen;
                                 packet_len -=Tc->TagLen;
 
-                             a=1;//check point  `
+                             a=1;//check point
+
                         }
                         break;
 
                         case 3:
                         {
+                             if(b==1)
+                                 break;
                              struct Tagpara_DS_para_set *DS = (struct Tagpara_DS_para_set*)packet;
                              memcpy(&vpr.probe_current_channel, &DS->Current_Channel, 1);
                              printf("## Current channel = %d\n", vpr.probe_current_channel);
@@ -237,6 +242,8 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                     {
                         case 0:
                         {
+                            if(a==1)
+                                break;
                              packet += sizeof(struct Tagpara_common);
                              memcpy(vps.probe_ESSID, packet,Tc->TagLen);
                              cout << vps.probe_ESSID << endl;
@@ -253,6 +260,8 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
 
                         case 3:
                         {
+                             if(b==1)
+                                break;
                              struct Tagpara_DS_para_set *DS = (struct Tagpara_DS_para_set*)packet;
                              memcpy(&vps.probe_current_channel, &DS->Current_Channel, 1);
                              printf("## Current channel = %d\n", vps.probe_current_channel);
@@ -309,7 +318,8 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
 
                         case 0:
                         {
-
+                             if(a==1)
+                                 break;
                              packet += sizeof(struct Tagpara_common);
                              memcpy(v.ESSID, packet,Tc->TagLen);
                              cout << v.ESSID << endl;
@@ -326,6 +336,8 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
 
                         case 3:
                         {
+                             if(b==1)
+                                 break;
                              struct Tagpara_DS_para_set *DS = (struct Tagpara_DS_para_set*)packet;
                              memcpy(&v.current_channel, &DS->Current_Channel, 1);
                              cout << "## Current channel = "<< (int)v.current_channel <<endl;
