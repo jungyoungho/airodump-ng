@@ -27,6 +27,9 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                 struct value_Association_res vA;
                 cout << "Association request" <<endl;
                 struct ieee80211_Association *A = (struct ieee80211_Association*)packet;
+                memset(Ar.Association_res_save_BSSID,0,6);
+                memset(vA.dst_addr,0,6);
+                memset(vA.src_addr,0,6);
                 memcpy(Ar.Association_res_save_BSSID,A->BSSID,6);
                 memcpy(vA.dst_addr,A->Dst_addr,6);
                 memcpy(vA.src_addr,A->Src_addr,6);
@@ -86,6 +89,9 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                 struct value_Reassociation_req vR;
                 cout << "Reassociation request" <<endl;
                 struct ieee80211_Ressociation *R = (struct ieee80211_Ressociation*)packet;
+                memset(Rr.Reassociation_req_save_BSSID,0,6);
+                memset(vR.src_addr,0,6);
+                memset(vR.dst_addr,0,6);
                 memcpy(Rr.Reassociation_req_save_BSSID,R->BSSID,6);
                 memcpy(vR.src_addr,R->Src_addr,6);
                 memcpy(vR.dst_addr,R->Dst_addr,6);
@@ -139,23 +145,26 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                 cout << "Reassociation response" <<endl;
             break;
 
-/*
             case 4:
             {
                 struct key_probe_req kpr;
                 struct value_probe_req vpr;
                 cout << "Probe_Request" << endl;
                 struct ieee80211_Probe_Request *PRQ = (struct ieee80211_Probe_Request*)packet;
+                memset(kpr.probe_save_bssid,0,6);
+                memset(vpr.src,0,6);
                 memcpy(kpr.probe_save_bssid,PRQ->BSSID,6);
                 memcpy(vpr.src,PRQ->Src_addr,6);
+
                 packet += sizeof(struct ieee80211_Probe_Request);
                 int a{0},b{0};
-
                 while(1)
                 {
                     if(a==1 && b==1)//case 0과 case 3이 모두 선택됬을경우 프로그램 종료
                         break;
                     struct Tagpara_common *Tc = (struct Tagpara_common*)packet;
+                    if(Tc->TagLen==0) //SSID 가 없을 때가 있음
+                         break;
                     memset(vpr.probe_ESSID,0,32);
                     switch(Tc->TagNum)
                     {
@@ -163,12 +172,12 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                         {
                              packet += sizeof(struct Tagpara_common);
                              memcpy(vpr.probe_ESSID, packet,Tc->TagLen);
-                             cout << "#############"<<vpr.probe_ESSID << endl;
+                             cout << "Probe ESSID = "<< vpr.probe_ESSID << endl;
 
                                 packet += Tc->TagLen;
                                 packet_len -=Tc->TagLen;
 
-                             a=1;//check point
+                             a=1;//check point  `
                         }
                         break;
 
@@ -200,13 +209,15 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                  }
             }
             break;
-*/
+
             case 5:
             {
                 struct key_probe_res kps;
                 struct value_probe_res vps;
                 cout << "Probe Response" <<endl;
                 struct ieee80211_Probe_Response *PRS = (struct ieee80211_Probe_Response*)packet;
+                memset(kps.probe_save_bssid,0,6);
+                memset(vps.src,0,6);
                 memcpy(kps.probe_save_bssid,PRS->BSSID,6);
                 memcpy(vps.src,PRS->Src_addr,6);
                 packet += sizeof(struct ieee80211_Probe_Response) + sizeof(struct ieee80211_wireless_LAN_mg_Beacon);
@@ -274,7 +285,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                 struct key_beacon k;
                 struct value_beacon v;
                 cout << "Beacon frame" <<endl;
-
+                memset(k.save_bssid,0,6);
                 struct ieee80211_Beacon_frame *BF = (struct ieee80211_Beacon_frame*)packet;
                 memcpy(k.save_bssid,BF->BSSID,6);
                 packet += sizeof(struct ieee80211_Beacon_frame) + sizeof(struct ieee80211_wireless_LAN_mg_Beacon);
