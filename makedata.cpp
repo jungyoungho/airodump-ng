@@ -12,6 +12,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
 {
 
     int packet_len = pkthdr->caplen;
+    const char *empty="(not associated)";
     struct radiotap_header *rh = (struct radiotap_header*)packet;
     packet += rh->header_len;
     struct ieee80211_common *c = (struct ieee80211_common *)packet;
@@ -163,8 +164,12 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                     if(a==1 && b==1)//case 0과 case 3이 모두 선택됬을경우 프로그램 종료
                         break;
                     struct Tagpara_common *Tc = (struct Tagpara_common*)packet;
-                    if(Tc->TagLen==0) //SSID 가 없을 때가 있음
-                         break;
+                    if(Tc->TagLen==0)//SSID 가 없을 때가 있음
+                    {
+                       memcpy(vpr.probe_ESSID,empty,strlen(empty));
+                       cout << vpr.probe_ESSID <<endl;
+                       break;
+                    }
                     memset(vpr.probe_ESSID,0,32);
                     switch(Tc->TagNum)
                     {
