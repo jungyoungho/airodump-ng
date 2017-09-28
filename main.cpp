@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <map>
 
-
 using namespace std;
 
 void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet);
@@ -14,7 +13,6 @@ int main(int argc, char *argv[])
         cout << "******* 인자값이 잘못되었거나 인자값이 존재하지 않습니다 *******" << endl;;
         cout << " 사용법 : interface name " << endl;
     }
-
     char *interface = argv[1];
     cout << " >> Interface name = "<< interface << endl;
 

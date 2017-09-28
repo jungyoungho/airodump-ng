@@ -10,18 +10,15 @@ using namespace std;
 
 void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
 {
-
     int packet_len = pkthdr->caplen;
-    const char *empty="(not associated)";
     struct radiotap_header *rh = (struct radiotap_header*)packet;
     packet += rh->header_len;
     struct ieee80211_common *c = (struct ieee80211_common *)packet;
-
     if(c->Type == 0)
     {
         switch(c->Sutype)
         {
-
+            /*불필요느낌
             case 0:
             {
                 struct key_Association_res Ar;
@@ -152,10 +149,10 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                 struct value_probe_req vpr;
                 cout << "Probe_Request" << endl;
                 struct ieee80211_Probe_Request *PRQ = (struct ieee80211_Probe_Request*)packet;
-                memset(kpr.probe_save_bssid,0,6);
-                memset(vpr.src,0,6);
-                memcpy(kpr.probe_save_bssid,PRQ->BSSID,6);
-                memcpy(vpr.src,PRQ->Src_addr,6);
+                memset(kpr.probe_save_bssid,0,6); //필요없을듯
+                memset(vpr.src,0,6); //필요없을듯
+                memcpy(kpr.probe_save_bssid,PRQ->BSSID,6); //필요없을듯
+                memcpy(vpr.src,PRQ->Src_addr,6); //필요없을듯
 
                 packet += sizeof(struct ieee80211_Probe_Request);
                 int a{0},b{0};
@@ -165,11 +162,7 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                         break;
                     struct Tagpara_common *Tc = (struct Tagpara_common*)packet;
                     if(Tc->TagLen==0)//SSID 가 없을 때가 있음
-                    {
-                       memcpy(vpr.probe_ESSID,empty,strlen(empty));
-                       cout << vpr.probe_ESSID <<endl;
                        break;
-                    }
                     memset(vpr.probe_ESSID,0,32);
                     switch(Tc->TagNum)
                     {
@@ -219,17 +212,17 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
                  }
             }
             break;
-
+            */ //불필요느낌
             case 5:
             {
                 struct key_probe_res kps;
                 struct value_probe_res vps;
                 cout << "Probe Response" <<endl;
                 struct ieee80211_Probe_Response *PRS = (struct ieee80211_Probe_Response*)packet;
-                memset(kps.probe_save_bssid,0,6);
-                memset(vps.src,0,6);
-                memcpy(kps.probe_save_bssid,PRS->BSSID,6);
-                memcpy(vps.src,PRS->Src_addr,6);
+                memset(kps.probe_save_bssid,0,6);//필요없을듯
+                memset(vps.src,0,6);//필요없을듯
+                memcpy(kps.probe_save_bssid,PRS->BSSID,6);//필요없을듯
+                memcpy(vps.src,PRS->Src_addr,6);//필요없을듯
                 packet += sizeof(struct ieee80211_Probe_Response) + sizeof(struct ieee80211_wireless_LAN_mg_Beacon);
                 int a{0},b{0}; //check point
                 while(1)
@@ -412,12 +405,22 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
     {
         switch(c->Sutype)
         {
+            case 4:
+            {
+                cout << "NUll Function" << endl;
+            }
+            break;
+
             case 8:
             {
                 struct key_QosData KQ;
                 struct value_QosData vQ;
                 cout<<"Qos Data"<<endl;
                 struct ieee80211_Qos_Data *QD = (struct ieee80211_Qos_Data*)packet;
+                memset(KQ.Qos_save_BSSID,0,6);
+                memset(vQ.Dst,0,6);
+                memset(vQ.STA_addr,0,6);
+
                 memcpy(KQ.Qos_save_BSSID,QD->BSSID,6);
                 memcpy(vQ.Dst,QD->Dst_addr,6);
                 memcpy(vQ.STA_addr,QD->STA,6);
@@ -431,3 +434,6 @@ void makedata(struct pcap_pkthdr *pkthdr,const u_char *packet)
     }
 
 }
+//make data의 모든구조체 제일 상위에 선언해주기
+
+//qos , frame beacon 카운트 하기
